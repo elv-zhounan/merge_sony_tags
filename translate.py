@@ -15,7 +15,7 @@ def translate(src:str, dst:str=None):
         if "Timeline" in name:
             print(name)
             key = name.lower().replace(".", "_")
-            label = name.replace(".", "")
+            label = name.replace(".", " ")
             tags = []
 
             txt = feat.text
@@ -33,23 +33,31 @@ def translate(src:str, dst:str=None):
                 
                 # TODO not sure what ss means 
                 h, m, s, ss = timetxt.split("-")[0].split(":")
-                start_time = (3600*int(h) + 60*int(m) + int(s))*1000 + int(int(ss)/60*1000)
+                start_time = (3600*int(h) + 60*int(m) + int(s))*1000 + int(int(ss)/24*1000)
                 h, m, s, ss = timetxt.split("-")[1].split(":")
-                end_time = (3600*int(h) + 60*int(m) + int(s))*1000 + int(int(ss)/60*1000)
+                end_time = (3600*int(h) + 60*int(m) + int(s))*1000 + int(int(ss)/24*1000)
 
-                if not content.startswith(" -"):
-                    tags.append({
-                        "start": start_time,
-                        "end": end_time,
-                        "text":[content.strip()]
-                    })
+                if key == "transcript_timeline":
+                    if not content.startswith(" -"):
+                        tags.append({
+                            "start": start_time,
+                            "end": end_time,
+                            "text":[content.strip()]
+                        })
+                    else:
+                        content = [c.strip() for c in content.split(" -")[1:]]
+                        tags.append({
+                            "start": start_time,
+                            "end": end_time,
+                            "text":content
+                        })
                 else:
-                    content = [c.strip() for c in content.split(" -")[1:]]
+                    content = [c.strip() for c in content.split(";")]
                     tags.append({
-                        "start": start_time,
-                        "end": end_time,
-                        "text":content
-                    })
+                            "start": start_time,
+                            "end": end_time,
+                            "text":content
+                        })
                 if s_next == -1 or txt.strip() == "":
                     break
             res["metadata_tags"][key] = {
