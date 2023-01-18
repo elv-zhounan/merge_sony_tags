@@ -12,7 +12,7 @@ def clean_shot_tags(shot_tags):
         res["tags"].extend(part["tags"])
     return res
 
-def shot_merge_features(shot_tags, feat_tags, merge=True):
+def shot_merge_features(shot_tags, feat_tags):
     # change the label name, specify it is from sony
     label = feat_tags["label"]
     if not label.startswith("Sony"):
@@ -43,7 +43,8 @@ def shot_merge_features(shot_tags, feat_tags, merge=True):
 
 if __name__ == "__main__":
     objects = sorted(os.listdir("sony_tags_json"))
-    objects.remove(".DS_Store")
+    if ".DS_Store" in objects:
+        objects.remove(".DS_Store")
 
     for object in tqdm.tqdm(objects):
         objectId = "_".join(object.split("_")[:3])
