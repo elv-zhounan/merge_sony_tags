@@ -34,6 +34,7 @@ def translate(src:str, dst:str=None):
                     txt = txt[s_next: ]
                 
                 # TODO some format issue in xml tags from sony
+                # need to check more
                 if len(timetxt) > 0 and timetxt != "00:00:00:00-00:00:00:00":
                     while timetxt[0] > "9" or timetxt[0] < "0":
                         timetxt = timetxt[1:]
@@ -42,28 +43,30 @@ def translate(src:str, dst:str=None):
                     start_time = (3600*int(h) + 60*int(m) + int(s))*1000 + int(int(ss)/24*1000)
                     h, m, s, ss = timetxt.split("-")[1].split(":")
                     end_time = (3600*int(h) + 60*int(m) + int(s))*1000 + int(int(ss)/24*1000)
-
-                    if key == "transcript_timeline":
-                        if not content.startswith(" -"):
-                            tags.append({
-                                "start": start_time,
-                                "end": end_time,
-                                "text":[content.strip()]
-                            })
-                        else:
-                            content = [c.strip() for c in content.split(" -")[1:]]
-                            tags.append({
-                                "start": start_time,
-                                "end": end_time,
-                                "text":content
-                            })
+                    if end_time <= start_time:
+                        print(timetxt)
                     else:
-                        content = [c.strip() for c in content.split(";")]
-                        tags.append({
-                                "start": start_time,
-                                "end": end_time,
-                                "text":content
-                            })
+                        if key == "transcript_timeline":
+                            if not content.startswith(" -"):
+                                tags.append({
+                                    "start": start_time,
+                                    "end": end_time,
+                                    "text":[content.strip()]
+                                })
+                            else:
+                                content = [c.strip() for c in content.split(" -")[1:]]
+                                tags.append({
+                                    "start": start_time,
+                                    "end": end_time,
+                                    "text":content
+                                })
+                        else:
+                            content = [c.strip() for c in content.split(";")]
+                            tags.append({
+                                    "start": start_time,
+                                    "end": end_time,
+                                    "text":content
+                                })
                 if s_next == -1 or txt.strip() == "":
                     break
             res["metadata_tags"][key] = {
