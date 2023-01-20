@@ -36,6 +36,7 @@ getClient()
         });
         console.log(all_part_tags);
         let shot_tags = [];
+        let track_tags = [];
         for (let k in all_part_tags) {
           const tags = await client.ContentObjectMetadata({
             libraryId,
@@ -44,10 +45,15 @@ getClient()
           });
           console.log(tags.shot_tags);
           shot_tags = shot_tags.concat(tags.shot_tags);
+          track_tags = track_tags.concat(tags);
         }
+        // fs.writeFileSync(
+        //   `./elv_tags_json/${objectId}_shot_tags.json`,
+        //   JSON.stringify(shot_tags)
+        // );
         fs.writeFileSync(
-          `./${objectId}_shot_tags.json`,
-          JSON.stringify(shot_tags)
+          `./elv_track_tags_json/${objectId}_track_tags.json`,
+          JSON.stringify(track_tags)
         );
       }
     } catch (err) {

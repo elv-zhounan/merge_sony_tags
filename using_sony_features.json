@@ -1,21 +1,14 @@
-[
-  "description_keywords_timeline",
-  "description_location_timeline",
-  "description_memorable_timeline",
-  "description_setting_timeline",
-  "description_theme_timeline",
-  "description_tone_timeline",
-  "facial_actorname_timeline",
-  "facial_charactername_timeline",
-  "keywords_audio_timeline",
-  "scene_shortdesc_timeline",
-  "sony_acp_shortdesc_timeline",
-  "sony_clipandshare_shortdesc_timeline",
-  "sony_clipandshare_title_timeline",
-  "sony_crackle_shortdescription_timeline",
-  "sony_itunesextra_shortdesc_timeline",
-  "sony_mdc_shortdescription_timeline",
-  "sony_music_title_timeline",
-  "sony_sceneslam_title_timeline",
-  "transcript_timeline"
-]
+{
+  "description_intext_timeline": "Description IntExt Timeline",
+  "description_keywords_timeline": "Description Keywords Timeline",
+  "description_location_timeline": "Description Location Timeline",
+  "description_setting_timeline": "Description Setting Timeline",
+  "description_theme_timeline": "Description These Timeline",
+  "facial_actorname_timeline": "Facial ActorName Timeline",
+  "facial_charactername_timeline": "Facial CharacterName Timeline",
+  "scene_shortdesc_timeline": "Scene ShortDesc Timeline",
+  "scene_title_timeline": "Scene Title Timeline",
+  "sony_mdc_clipname_timeline": "Sony MDC ClipName Timeline",
+  "sony_mdc_shortdescription_timeline": "Sony MDC ShortDescription Timerline",
+  "transcript_timeline": "Transcript Timeline"
+}
