@@ -16,6 +16,10 @@ if __name__ == "__main__":
             os.makedirs(save_root)
         for i, (shot_tag, track_tag) in enumerate(zip(shot_tags, track_tags)):
             track_tag["shot_tags"] = shot_tag
+            track_tag = {
+                "version": 1,
+                "video_level_tags": {},
+                "metadata_tags": track_tag
+            }
             file_name = f"video-tags-tracks-{str(i).zfill(4)}.json"
             json.dump(track_tag, open(os.path.join(save_root, file_name), "w"))
-            
