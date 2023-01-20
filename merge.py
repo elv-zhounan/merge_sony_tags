@@ -116,13 +116,13 @@ if __name__ == "__main__":
             # safety check
             for (pre_parts, post_parts) in zip(elv_tags, merged_tags):
                 # check len is the same
-                assert len(pre_parts) == len(post_parts)
+                assert len(pre_parts["tags"]) == len(post_parts["tags"])
                 for pre_part, post_part in zip(pre_parts["tags"], post_parts["tags"]):
                     safety_check_part(pre_part, post_part)
 
         else:
             elv_tags, _ = clean_shot_tags(elv_tags)
-            assert len(elv_tags) == len(merged_tags)
+            assert len(elv_tags["tags"]) == len(merged_tags["tags"])
             for pre_part, post_part in zip(elv_tags["tags"], merged_tags["tags"]):
                 safety_check_part(pre_part, post_part)
 
