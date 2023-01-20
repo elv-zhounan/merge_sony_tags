@@ -85,6 +85,7 @@ def safety_check_part(pre_part, post_part):
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument('--split', action="store_true")
+    parser.add_argument("--id", default="", type=str)
     args = parser.parse_args()
                 
     objects = sorted(os.listdir("sony_tags_json"))
@@ -94,40 +95,41 @@ if __name__ == "__main__":
     bar = tqdm.tqdm(objects)
     for object in bar:
         bar.set_postfix_str(object)
-        objectId = "_".join(object.split("_")[:3])
-        elv_tags = json.load(open(f"elv_tags_json/{objectId}_shot_tags.json"))
-        elv_tags, cuts = clean_shot_tags(elv_tags)
-        sony_tags = json.load(open(f"sony_tags_json/{object}"))
-        sony_features = list(sony_tags["metadata_tags"].keys())
-        using_sony_features = json.load(open("using_sony_features.json"))
+        if args.id == "" or (args.id != ""  and object.startswith(args.id)):
+            objectId = "_".join(object.split("_")[:3])
+            elv_tags = json.load(open(f"elv_tags_json/{objectId}_shot_tags.json"))
+            elv_tags, cuts = clean_shot_tags(elv_tags)
+            sony_tags = json.load(open(f"sony_tags_json/{object}"))
+            sony_features = list(sony_tags["metadata_tags"].keys())
+            using_sony_features = json.load(open("using_sony_features.json"))
 
-        merged_tags = elv_tags
-        for feature in using_sony_features:
-            if feature in sony_features:
-                merged_tags = shot_merge_features(merged_tags, sony_tags["metadata_tags"][feature], using_sony_features[feature])
+            merged_tags = elv_tags
+            for feature in using_sony_features:
+                if feature in sony_features:
+                    merged_tags = shot_merge_features(merged_tags, sony_tags["metadata_tags"][feature], using_sony_features[feature])
+                else:
+                    merged_tags = add_empty_feature(merged_tags, using_sony_features[feature])
+
+            # basic check
+            assert len(merged_tags["tags"]) == sum(cuts)
+            elv_tags = json.load(open(f"elv_tags_json/{objectId}_shot_tags.json"))
+            if args.split:
+                merged_tags = split(merged_tags, cuts)
+                # safety check
+                for (pre_parts, post_parts) in zip(elv_tags, merged_tags):
+                    # check len is the same
+                    assert len(pre_parts["tags"]) == len(post_parts["tags"])
+                    for pre_part, post_part in zip(pre_parts["tags"], post_parts["tags"]):
+                        safety_check_part(pre_part, post_part)
+
             else:
-                merged_tags = add_empty_feature(merged_tags, using_sony_features[feature])
-
-        # basic check
-        assert len(merged_tags["tags"]) == sum(cuts)
-        elv_tags = json.load(open(f"elv_tags_json/{objectId}_shot_tags.json"))
-        if args.split:
-            merged_tags = split(merged_tags, cuts)
-            # safety check
-            for (pre_parts, post_parts) in zip(elv_tags, merged_tags):
-                # check len is the same
-                assert len(pre_parts) == len(post_parts)
-                for pre_part, post_part in zip(pre_parts["tags"], post_parts["tags"]):
+                elv_tags, _ = clean_shot_tags(elv_tags)
+                assert len(elv_tags["tags"]) == len(merged_tags["tags"])
+                for pre_part, post_part in zip(elv_tags["tags"], merged_tags["tags"]):
                     safety_check_part(pre_part, post_part)
 
-        else:
-            elv_tags, _ = clean_shot_tags(elv_tags)
-            assert len(elv_tags) == len(merged_tags)
-            for pre_part, post_part in zip(elv_tags["tags"], merged_tags["tags"]):
-                safety_check_part(pre_part, post_part)
 
+            json.dump(merged_tags, open(f"merged_tags_json/{object.split('.')[0]}_shot_tags.json", "w"))
 
-        json.dump(merged_tags, open(f"merged_tags_json/{object.split('.')[0]}_shot_tags.json", "w"))
-
-        """debug use, only test one object one feature"""
-        # break
+            """debug use, only test one object one feature"""
+            # break
