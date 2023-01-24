@@ -1,5 +1,12 @@
 # About merge tags from sony to our tags for search usage
 
+## run
+
+1. node download_tagfiles.js [pk]
+2. python merge.py --split
+3. python finalize.py
+4. node upload.js [pk]
+
 ## tasks done
 
 - [x] download tags from fabric
