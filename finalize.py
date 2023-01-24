@@ -37,6 +37,7 @@ if __name__ == "__main__":
 
     parser = argparse.ArgumentParser()
     parser.add_argument("--id", default="", type=str)
+    parser.add_argument("--add_all_tracks", action="store_true")
     args = parser.parse_args()
 
     merged_files = os.listdir("./merged_tags_json")
@@ -47,7 +48,7 @@ if __name__ == "__main__":
             print(objectId)
 
             all_sony_feats = json.load(open(f"./sony_tags_json/{file.replace('_shot_tags', '')}"))["metadata_tags"]
-            sony_feats_in_use = json.load(open("./using_sony_features.json"))
+            sony_feats_in_use = json.load(open("./all_sony_features.json")) if args.add_all_tracks else json.load(open("./using_sony_features.json"))
             sony_feats = {}
             for feat in all_sony_feats:
                 if feat in sony_feats_in_use:
